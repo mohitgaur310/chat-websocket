@@ -16,4 +16,9 @@ function onConnected(socket) {
     socketConnection.delete(socket.id);
     io.emit("total_client", socketConnection.size);
   });
+
+  socket.on("message", (data) => {
+    console.log("🚀 ~ socket.on ~ data:", data);
+    socket.broadcast.emit("chat-message", data);
+  });
 }
