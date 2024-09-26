@@ -15,7 +15,27 @@ messageForm.addEventListener("submit", (e) => {
   e.preventDefault();
   sendMessage();
 });
+function clearFeedback() {
+  document.querySelectorAll("li.message-feedback").forEach((element) => {
+    element.parentNode.removeChild(element);
+  });
+}
+messageInput.addEventListener("focus", (e) => {
+  socket.emit("feedback", {
+    feedback: `${nameInput.value} is typing a message`,
+  });
+});
+messageInput.addEventListener("keypress", (e) => {
+  socket.emit("feedback", {
+    feedback: `${nameInput.value} is typing a message...`,
+  });
+});
 
+messageInput.addEventListener("blur", (e) => {
+  socket.emit("feedback", {
+    feedback: ``,
+  });
+});
 function sendMessage() {
   if (messageInput.value === "") return;
   const data = {
@@ -33,7 +53,20 @@ socket.on("chat-message", (data) => {
   addMessageUI(false, data);
 });
 
+socket.on("feedback", (data) => {
+  addFeedback(data);
+});
+
+function addFeedback(data) {
+  clearFeedback();
+  const element = `<li class="message-feedback">
+                <p class="feedback" id="feedback"> ${data.feedback}</p>
+                </li>`;
+  messageContainer.innerHTML += element;
+}
+
 function addMessageUI(isOwnMessage, data) {
+  clearFeedback();
   const element = `<li class="${
     isOwnMessage ? "message-right" : "message-left"
   }">
