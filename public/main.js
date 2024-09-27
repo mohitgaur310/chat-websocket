@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io("https://chat-websocket-kohl.vercel.app/");
 
 const clientsTotal = document.getElementById("client-total");
 
